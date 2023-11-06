@@ -50,10 +50,10 @@ void *recycler_allocate(struct recycler *r)
 
 void recycler_free(struct recycler *r, void *block)
 {
-    if (r != NULL || block != NULL)
+    if (r != NULL && block != NULL)
     {
-        struct free_list *block = block;
-        block->next = r->free;
-        r->free = block;
+        struct free_list *b = block;
+        b->next = r->free;
+        r->free = b;
     }
 }
