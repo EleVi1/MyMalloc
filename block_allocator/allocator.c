@@ -7,13 +7,13 @@
 
 static size_t align(size_t size)
 {
-    size_t offset = size % sizeof(long double);
+    size_t offset = size % sysconf(_SC_PAGESIZE);
     if (offset == 0)
         return size;
     size_t res;
     if (__builtin_add_overflow(size, 0, &res) != 0)
         return 0;
-    size_t block = (size / sizeof(long double) + 1) * sizeof(long double);
+    size_t block = (size / sysconf(_SC_PAGESIZE) + 1) * sysconf(_SC_PAGESIZE);
     return block;
 }
 
