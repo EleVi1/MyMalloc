@@ -1,14 +1,13 @@
 #include "block.h"
 
 #include <stddef.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <sys/mman.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "malloc.h"
 
-static size_t align(size_t size)
+size_t align(size_t size)
 {
     size_t offset = size % sysconf(_SC_PAGESIZE);
     if (offset == 0)
@@ -26,9 +25,10 @@ struct page *create_page(size_t block_size)
     if (update == 0)
         update = sysconf(_SC_PAGESIZE);
     struct page *added = mmap(NULL, update, PROT_READ | PROT_WRITE,
-                                  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+                              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (!added)
         return NULL;
+    added->page_size = update;
     added->size = block_size;
     added->capacity = (update - sizeof(struct page)) / block_size;
     added->blocks = added;
@@ -43,6 +43,7 @@ struct page *create_page(size_t block_size)
         l = l->next;
     }
     l->next = NULL;
+    added->next = NULL;
     return added;
 }
 
@@ -50,11 +51,11 @@ void *block_allocate(struct page *p)
 {
     if (!p || p->free == NULL)
         return NULL;
+
     struct free_list *tmp = p->free;
-    void *res = tmp;
     p->free = tmp->next;
     p->capacity--;
-    return res;
+    return tmp;
 }
 
 void page_free(struct page *p)
