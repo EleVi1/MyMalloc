@@ -24,4 +24,4 @@ size_t align(size_t size);
 void *block_allocate(struct page *p);
 void page_free(struct page *p);
 
-#endif /* !ALLOCATOR_H */
+#endif /* ! BLOCK_H */

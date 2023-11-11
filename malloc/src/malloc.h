@@ -3,4 +3,4 @@
 
 extern struct page *first;
 
-#endif /* !MALLOC_H*/
+#endif /* ! MALLOC_H */

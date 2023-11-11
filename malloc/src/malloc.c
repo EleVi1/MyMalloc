@@ -2,7 +2,6 @@
 
 #include <err.h>
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -151,7 +150,7 @@ __attribute__((visibility("default"))) void *calloc(size_t nmemb, size_t size)
     size_t new = 0;
     if (__builtin_mul_overflow(size, nmemb, &new))
     {
-        fprintf(stderr, "calloc: overflow of nmemb * size\n");
+        errx(1, "calloc: overflow of nmemb * size");
         return NULL;
     }
     size_t aligned = new_size(nmemb * size);
