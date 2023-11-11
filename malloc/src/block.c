@@ -19,9 +19,20 @@ size_t align(size_t size)
     return block;
 }
 
+size_t size_struct(size_t size)
+{
+    size_t res = 16;
+    while (res < size)
+    {
+        res += 16;
+    }
+    return res;
+}
+
 struct page *create_page(size_t block_size)
 {
-    size_t update = align(block_size + sizeof(struct page));
+    size_t str = size_struct(sizeof(struct page));
+    size_t update = align(block_size + str);
     if (update == 0)
         update = sysconf(_SC_PAGESIZE);
     struct page *added = mmap(NULL, update, PROT_READ | PROT_WRITE,
@@ -30,10 +41,10 @@ struct page *create_page(size_t block_size)
         return NULL;
     added->page_size = update;
     added->size = block_size;
-    added->capacity = (update - sizeof(struct page)) / block_size;
+    added->capacity = (update - str) / block_size;
     added->blocks = added;
     char *blk = added->blocks;
-    blk += sizeof(struct page);
+    blk += str;
     added->blocks = blk;
     added->free = added->blocks;
     struct free_list *l = added->free;
@@ -61,5 +72,5 @@ void *block_allocate(struct page *p)
 void page_free(struct page *p)
 {
     if (p != NULL)
-        munmap(p, p->size + sizeof(struct page));
+        munmap(p, p->page_size);
 }
