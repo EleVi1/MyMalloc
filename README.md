@@ -1,11 +1,11 @@
 ---
 
-### Main project :
+# Main project :
 Implement the basic functions of memory management of C, malloc, calloc and realloc
 
 ---
 
-### Preliminary exercises :
+## Preliminary exercises :
 - alignment
 - block_allocator
 - my_recycler
